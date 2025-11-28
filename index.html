@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Telegram Game</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            color: white;
+        }
+        canvas {
+            border: 3px solid white;
+            background: rgba(255,255,255,0.1);
+            display: block;
+            margin: 20px auto;
+            border-radius: 10px;
+        }
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 My Telegram Game</h1>
+        <div class="score">Score: <span id="score">0</span></div>
+        
+        <canvas id="gameCanvas" width="500" height="400"></canvas>
+        <p>Use Arrow Keys to move and collect balls!</p>
+    </div>
+
+    <script>
+        // Game Setup
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+
+        // Player
+        let playerX = 250;
+        let playerY = 200;
+        const playerSize = 30;
+        const playerSpeed = 5;
+
+        // Balls
+        let balls = [
+            { x: 100, y: 100, collected: false, color: '#FF6B6B' },
+            { x: 400, y: 150, collected: false, color: '#4ECDC4' },
+            { x: 200, y: 300, collected: false, color: '#FFE66D' },
+            { x: 350, y: 250, collected: false, color: '#6A0572' }
+        ];
+
+        let score = 0;
+
+        // Keyboard Controls
+        const keys = {};
+        window.addEventListener('keydown', (e) => { keys[e.key] = true; });
+        window.addEventListener('keyup', (e) => { keys[e.key] = false; });
+
+        function movePlayer() {
+            if (keys['ArrowUp'] && playerY > 0) playerY -= playerSpeed;
+            if (keys['ArrowDown'] && playerY < canvas.height - playerSize) playerY += playerSpeed;
+            if (keys['ArrowLeft'] && playerX > 0) playerX -= playerSpeed;
+            if (keys['ArrowRight'] && playerX < canvas.width - playerSize) playerX += playerSpeed;
+        }
+
+        function checkBallCollection() {
+            balls.forEach(ball => {
+                if (!ball.collected) {
+                    const distance = Math.sqrt(
+                        Math.pow(playerX - ball.x, 2) + Math.pow(playerY - ball.y, 2)
+                    );
+                    
+                    if (distance < playerSize + 15) {
+                        ball.collected = true;
+                        score += 10;
+                        scoreElement.textContent = score;
+                    }
+                }
+            });
+        }
+
+        function drawPlayer() {
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(playerX, playerY, playerSize, playerSize);
+            
+            // Player details
+            ctx.fillStyle = '#2C3E50';
+            ctx.fillRect(playerX + 5, playerY + 5, 8, 8);
+            ctx.fillRect(playerX + 17, playerY + 5, 8, 8);
+            ctx.fillStyle = '#E74C3C';
+            ctx.fillRect(playerX + 10, playerY + 20, 10, 5);
+        }
+
+        function draw
